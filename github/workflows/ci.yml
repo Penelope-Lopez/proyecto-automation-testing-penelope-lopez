@@ -1,0 +1,51 @@
+name: CI ProyectoAutomationTestingPenelopeLopez
+on:
+  push:
+    branches: [main,develop]
+  pull_request:
+    branches: [main,develop]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      PYTHON:VERSION: '3.12'
+      PIP_CACHE: ~/.cache/pip
+
+    steps:
+    #1 Checkout:
+    - name: Checkout codigo
+      uses: actions/checkout@v4
+    
+    #2 Cache de pip:
+    - name: Cache dependencia
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.PIP_CACHE }}
+        key: ${{ runner.os }}-pip-${{ hashfiles('**requirements.txt') }}
+
+    #3 Setup de python:
+    - name: Instalar python ${{ env.PYTHON_VERSION }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    #4 Instalar dependencias:
+    - name: Instalar dependencias
+      run: pip install -r requirements.txt
+
+    #5 Ejecutar Test:
+    - name: Run test
+      run: python3 run_test.py
+
+    #6 Subir artefactos (reporte + imagenes + logs):
+    - name: Subir HTML report
+      uses: actions/upload-artifact@v4
+      with:
+        name: html-report
+        path: reports/
+
+    - name: Subir Suite logs
+      uses: actions/upload-artifact@v4
+      with:
+        name: suite-log
+        path: logs/

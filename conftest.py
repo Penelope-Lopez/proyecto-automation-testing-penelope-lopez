@@ -13,6 +13,10 @@ target.mkdir(parents=True, exist_ok=True)
 def driver():
     options = Options()
     options.add_argument("--incognito")
+    options.add_argument("--no-sandbox") # github
+    options.add_argument("--disable-gpu")
+    options.add_argument("--windows-size=1920,1080")
+    options.add_argument("--headless=new") # github
 
     driver = webdriver.Chrome(options=options)
     yield driver
